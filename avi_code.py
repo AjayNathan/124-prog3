@@ -1,6 +1,7 @@
 # functions
 
 import random
+import math
 
 def randnums(a,b,n,step=1):
     return [random.randrange(a,b,step) for x in range(n)]
@@ -72,11 +73,9 @@ def calc_mean(l):
     s = 0
     for x in l:
         s += x
-    return float(s)/len(l)
+    return s/len(l)
 
 # start of code
-
-
 runs = 25000
 
 kklist = []
@@ -88,7 +87,7 @@ sas = []
 sapp = []
 
 
-for _ in xrange(0, 50):
+for _ in xrange(2):
     S = randnums(-1,2,100,2)
     A = randnums(1,10**12,100)
 
@@ -98,7 +97,7 @@ for _ in xrange(0, 50):
 
     bestres = 10**13
     currress = 10**13
-    for x in xrange(0,runs):
+    for x in xrange(runs):
         Sj = randnums(-1,2,100,2)
         currres = random_sample_res(Sj,A[:])
         if currres < bestres:
@@ -109,7 +108,7 @@ for _ in xrange(0, 50):
     # repeated random, preparition
 
     curr = kk(A[:])
-    for x in xrange(0,runs):
+    for x in xrange(runs):
         Aprime, P = prepartition(A[:])
         prev = kk(Aprime[:])
         if prev < curr:
@@ -122,7 +121,7 @@ for _ in xrange(0, 50):
     SHi = S[:]
     bestreshill = 10**13
     currresshill = random_sample_res(SHi[:],A[:])
-    for x in xrange(0,runs):
+    for x in xrange(runs):
         SHi = random_sample_move(SHi[:])
         currreshill = random_sample_res(SHi[:],A[:])
         if currreshill < bestreshill:
@@ -134,7 +133,7 @@ for _ in xrange(0, 50):
 
     Ai, P = prepartition(A[:])
     currhill = kk(Ai[:])
-    for x in xrange(0,runs):
+    for x in xrange(runs):
         P = prepartition_move(P)
         App, P = prepartition(A[:],P)
         prevhill = kk(App)
@@ -148,7 +147,7 @@ for _ in xrange(0, 50):
     bestressa = random_sample_res(S[:],A[:])
     Spp = S[:]
     sppres = bestressa
-    for x in xrange(0,runs):
+    for x in xrange(runs):
         Sp = random_sample_move(S[:])
         currressa = random_sample_res(Sp[:],A[:])
         if currressa < bestressa:
@@ -165,7 +164,7 @@ for _ in xrange(0, 50):
     Asa, Psa = prepartition(A[:])
     brsa = kk(Asa[:])
     appres = brsa
-    for x in xrange(0,runs):
+    for x in xrange(runs):
         Psa = prepartition_move(Psa[:])
         Apsa, Psa = prepartition(Asa[:],Psa[:])
         crsa = kk(Apsa[:])
@@ -186,4 +185,10 @@ for _ in xrange(0, 50):
 # print "SA, Standard: ", sas
 # print "SA, PP: ", sapp
 
-calc_mean(kklist),calc_mean(rrs),calc_mean(rrpp),calc_mean(hcs),calc_mean(hcpp),calc_mean(sas),calc_mean(sapp)
+print "KK: ", calc_mean(kklist)
+print "Repeated Random, Standard: ", calc_mean(rrs)
+print "Repeated Random, PP: ", calc_mean(rrpp)
+print "Hill climb, Standard: ", calc_mean(hcs)
+print "Hill climb, PP: ", calc_mean(hcpp)
+print "SA, Standard: ", calc_mean(sas)
+print "SA, PP: ", calc_mean(sapp)
