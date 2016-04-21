@@ -65,58 +65,125 @@ def kk(nums):
 
     return nums[a]
 
+def T(i):
+    return 10**10*(0.8)**math.floor(i/300.0)
+
+def calc_mean(l):
+    s = 0
+    for x in l:
+        s += x
+    return float(s)/len(l)
 
 # start of code
 
-S = randnums(-1,2,100,2)
-A = randnums(1,10**12,100)
 
-print "KK: ", kk(A[:])
+runs = 25000
 
-Si = S[:]
-bestres = 10**13
-currress = 10**13
-for x in xrange(0,25000):
-    Sj = randnums(-1,2,100,2)
-    currres = random_sample_res(Sj,A[:])
-    if currres < bestres:
-        bestres = currres
-
-print "Repeated Random, Standard: ", bestres
-
-curr = kk(A[:])
-for x in xrange(0,25000):
-    Aprime, P = prepartition(A[:])
-    prev = kk(Aprime[:])
-    if prev < curr:
-        print prev
-        curr = prev
-
-print "Repeated Random, PP: ", curr
-
-SHi = S[:]
-bestreshill = 10**13
-currresshill = 0
-for x in xrange(0,2500):
-    SHj = random_sample_move(SHi)
-    currreshill = random_sample_res(SHj,A[:])
-    if currreshill < bestreshill:
-        bestreshill = currreshill
-
-print "Hill climb, Standard: ",bestreshill
+kklist = []
+rrs = []
+rrpp = []
+hcs = []
+hcpp = []
+sas = []
+sapp = []
 
 
-Pi = []
-Pj= []
-Pprime = []
-Ai, Pi = prepartition(A[:])
-currhill = kk(Ai[:])
-for x in xrange(0,25000):
-    Pj = prepartition_move(P)
-    App, Pj = prepartition(A,Pj)
-    prevhill = kk(App)
-    if prevhill < currhill:
-        print prevhill
-        currhill = prevhill
+for _ in xrange(0, 50):
+    S = randnums(-1,2,100,2)
+    A = randnums(1,10**12,100)
 
-print "Hill climb, PP: ", currhill
+    kklist.append(kk(A[:]))
+
+    # repeated random, standard
+
+    bestres = 10**13
+    currress = 10**13
+    for x in xrange(0,runs):
+        Sj = randnums(-1,2,100,2)
+        currres = random_sample_res(Sj,A[:])
+        if currres < bestres:
+            bestres = currres
+
+    rrs.append(bestres)
+
+    # repeated random, preparition
+
+    curr = kk(A[:])
+    for x in xrange(0,runs):
+        Aprime, P = prepartition(A[:])
+        prev = kk(Aprime[:])
+        if prev < curr:
+            curr = prev
+
+    rrpp.append(curr)
+
+    # hill climb, standard
+
+    SHi = S[:]
+    bestreshill = 10**13
+    currresshill = random_sample_res(SHi[:],A[:])
+    for x in xrange(0,runs):
+        SHi = random_sample_move(SHi[:])
+        currreshill = random_sample_res(SHi[:],A[:])
+        if currreshill < bestreshill:
+            bestreshill = currreshill
+
+    hcs.append(bestreshill)
+
+    # hill climb, prepartition
+
+    Ai, P = prepartition(A[:])
+    currhill = kk(Ai[:])
+    for x in xrange(0,runs):
+        P = prepartition_move(P)
+        App, P = prepartition(A[:],P)
+        prevhill = kk(App)
+        if prevhill < currhill:
+            currhill = prevhill
+
+    hcpp.append(currhill)
+
+    # simple annealing, standard
+
+    bestressa = random_sample_res(S[:],A[:])
+    Spp = S[:]
+    sppres = bestressa
+    for x in xrange(0,runs):
+        Sp = random_sample_move(S[:])
+        currressa = random_sample_res(Sp[:],A[:])
+        if currressa < bestressa:
+            bestressa = currressa
+        elif random.random() < math.e**(-(currressa-bestressa)/T(x)):
+            bestressa = currressa
+        if bestressa < sppres:
+            sppres = bestressa
+
+    sas.append(sppres)
+
+    # simple annealing, pp
+
+    Asa, Psa = prepartition(A[:])
+    brsa = kk(Asa[:])
+    appres = brsa
+    for x in xrange(0,runs):
+        Psa = prepartition_move(Psa[:])
+        Apsa, Psa = prepartition(Asa[:],Psa[:])
+        crsa = kk(Apsa[:])
+        if crsa < brsa:
+            brsa = crsa
+        elif random.random() < math.e**(-(crsa-brsa)/T(x)):
+            brsa = crsa
+        if brsa < appres:
+            appres = brsa
+
+    sapp.append(appres)
+
+# print "KK: ", kklist
+# print "Repeated Random, Standard: ", rrs
+# print "Repeated Random, PP: ", rrpp
+# print "Hill climb, Standard: ", hcs
+# print "Hill climb, PP: ", hcpp
+# print "SA, Standard: ", sas
+# print "SA, PP: ", sapp
+
+calc_mean(kklist),calc_mean(rrs),calc_mean(rrpp),calc_mean(hcs),calc_mean(hcpp),calc_mean(sas),calc_mean(sapp)
