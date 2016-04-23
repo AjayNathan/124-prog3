@@ -70,12 +70,14 @@ def T(i):
     return 10**10*(0.8)**math.floor(i/300.0)
 
 def calc_mean(l):
-    s = 0
+    s = 0.0
     for x in l:
         s += x
     return s/len(l)
 
 # start of code
+
+
 runs = 25000
 
 kklist = []
@@ -87,95 +89,100 @@ sas = []
 sapp = []
 
 
-for _ in xrange(2):
+for _ in xrange(0, 10):
     S = randnums(-1,2,100,2)
     A = randnums(1,10**12,100)
+    _ ,P = prepartition(A[:])
 
     kklist.append(kk(A[:]))
 
-    # repeated random, standard
+#     # repeated random, standard
 
-    bestres = 10**13
-    currress = 10**13
-    for x in xrange(runs):
-        Sj = randnums(-1,2,100,2)
-        currres = random_sample_res(Sj,A[:])
-        if currres < bestres:
-            bestres = currres
+#     bestres = 10**13
+#     currress = 10**13
+#     for x in xrange(0,runs):
+#         Sj = randnums(-1,2,100,2)
+#         currres = random_sample_res(Sj,A[:])
+#         if currres < bestres:
+#             bestres = currres
 
-    rrs.append(bestres)
+#     rrs.append(bestres)
 
-    # repeated random, preparition
+#     # repeated random, preparition
 
-    curr = kk(A[:])
-    for x in xrange(runs):
-        Aprime, P = prepartition(A[:])
-        prev = kk(Aprime[:])
-        if prev < curr:
-            curr = prev
+#     curr = kk(A[:])
+#     for x in xrange(0,runs):
+#         Aprime, P = prepartition(A[:])
+#         prev = kk(Aprime[:])
+#         if prev < curr:
+#             curr = prev
 
-    rrpp.append(curr)
+#     rrpp.append(curr)
 
-    # hill climb, standard
+#     # hill climb, standard
 
-    SHi = S[:]
-    bestreshill = 10**13
-    currresshill = random_sample_res(SHi[:],A[:])
-    for x in xrange(runs):
-        SHi = random_sample_move(SHi[:])
-        currreshill = random_sample_res(SHi[:],A[:])
-        if currreshill < bestreshill:
-            bestreshill = currreshill
+#     SHi = S[:]
+#     bestreshill = 10**13
+#     currresshill = random_sample_res(SHi[:],A[:])
+#     for x in xrange(0,runs):
+#         SHi = random_sample_move(SHi[:])
+#         currreshill = random_sample_res(SHi[:],A[:])
+#         if currreshill < bestreshill:
+#             bestreshill = currreshill
 
-    hcs.append(bestreshill)
+#     hcs.append(bestreshill)
 
-    # hill climb, prepartition
+#     # hill climb, prepartition
 
-    Ai, P = prepartition(A[:])
+    Ai, Pi = prepartition(A[:],P[:])
     currhill = kk(Ai[:])
-    for x in xrange(runs):
-        P = prepartition_move(P)
-        App, P = prepartition(A[:],P)
+    for x in xrange(0,runs):
+        Pi = prepartition_move(Pi[:])
+        App, Pi = prepartition(A[:],Pi[:])
         prevhill = kk(App)
         if prevhill < currhill:
             currhill = prevhill
-
+    print currhill
     hcpp.append(currhill)
 
-    # simple annealing, standard
+    # simulated annealing, standard
 
-    bestressa = random_sample_res(S[:],A[:])
-    Spp = S[:]
-    sppres = bestressa
-    for x in xrange(runs):
-        Sp = random_sample_move(S[:])
-        currressa = random_sample_res(Sp[:],A[:])
-        if currressa < bestressa:
-            bestressa = currressa
-        elif random.random() < math.e**(-(currressa-bestressa)/T(x)):
-            bestressa = currressa
-        if bestressa < sppres:
-            sppres = bestressa
+#     Spp = S[:]
+#     Sp = S[:]
+#     Sppres = random_sample_res(Spp[:],A[:])
+#     Sres = Sppres
+#     for x in xrange(0,runs):
+#         Sp = random_sample_move(Sp[:])
+#         Spres = random_sample_res(Sp[:],A[:])
+#         if Spres < Sres:
+#             Sres = Spres
+#         elif random.random() < math.e**(-(Spres-Sres)/T(x)):
+#             Sres = Spres
+#         if Sres < Sppres:
+# #             print Sres
+#             Sppres = Sres
+#     print Sppres
+#     sas.append(Sppres)
 
-    sas.append(sppres)
+    # simulated annealing, prepartition
 
-    # simple annealing, pp
-
-    Asa, Psa = prepartition(A[:])
-    brsa = kk(Asa[:])
-    appres = brsa
-    for x in xrange(runs):
-        Psa = prepartition_move(Psa[:])
-        Apsa, Psa = prepartition(Asa[:],Psa[:])
-        crsa = kk(Apsa[:])
-        if crsa < brsa:
-            brsa = crsa
-        elif random.random() < math.e**(-(crsa-brsa)/T(x)):
-            brsa = crsa
-        if brsa < appres:
-            appres = brsa
-
-    sapp.append(appres)
+    Acopy, Pinit = prepartition(A[:],P[:])
+    Sppres = kk(Acopy[:])
+    Sres = Sppres
+    Pp = Pinit
+    for x in xrange(0,runs):
+        Pp = prepartition_move(Pp[:])
+        Ap,Pp = prepartition(Acopy[:],Pp[:])
+        Spres = kk(Ap[:])
+        if Spres < Sres:
+            Sres = Spres
+        elif random.random() < 0.05:
+            Sres = Spres
+        if Sres < Sppres:
+#             print Sres
+            Sppres = Sres
+    print Sppres
+    sapp.append(Sppres)
 
 # print "KK: ", kklist
 # print "Repeated Random, Standard: ", rrs
@@ -185,10 +192,10 @@ for _ in xrange(2):
 # print "SA, Standard: ", sas
 # print "SA, PP: ", sapp
 
-print "KK: ", calc_mean(kklist)
-print "Repeated Random, Standard: ", calc_mean(rrs)
-print "Repeated Random, PP: ", calc_mean(rrpp)
-print "Hill climb, Standard: ", calc_mean(hcs)
-print "Hill climb, PP: ", calc_mean(hcpp)
-print "SA, Standard: ", calc_mean(sas)
+# print "KK: ", calc_mean(kklist)
+# print "Repeated Random, Standard: ", calc_mean(rrs)
+# print "Repeated Random, PP: ", calc_mean(rrpp)
+# print "Hill climb, Standard: ", calc_mean(hcs)
+print "Hill climb, PP: ",calc_mean(hcpp)
+# print "SA, Standard: ", sas
 print "SA, PP: ", calc_mean(sapp)
