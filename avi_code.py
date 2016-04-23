@@ -1,7 +1,7 @@
 # functions
-
 import random
 import math
+import sys
 
 def randnums(a,b,n,step=1):
     return [random.randrange(a,b,step) for x in range(n)]
@@ -77,7 +77,6 @@ def calc_mean(l):
 
 # start of code
 
-
 runs = 25000
 
 kklist = []
@@ -89,7 +88,8 @@ sas = []
 sapp = []
 
 
-for n in xrange(0, 50):
+for n in xrange(0, 25):
+    print n
     S = randnums(-1,2,100,2)
     A = randnums(1,10**12,100)
     _ ,P = prepartition(A[:])
@@ -142,7 +142,7 @@ for n in xrange(0, 50):
         prevhill = kk(App)
         if prevhill < currhill:
             currhill = prevhill
-    print "Hill climb, PP: ", currhill
+    # print "Hill climb, PP: ", currhill
     hcpp.append(currhill)
 
     # simulated annealing, standard
@@ -161,7 +161,7 @@ for n in xrange(0, 50):
         if Sres < Sppres:
 #             print Sres
             Sppres = Sres
-    print Sppres
+    # print Sppres
     sas.append(Sppres)
 
     # simulated annealing, prepartition
@@ -183,7 +183,7 @@ for n in xrange(0, 50):
             Sppres = Sres
     # print "SA PP ", Sppres
     sapp.append(Sppres)
-    print n
+
 
 print "RESULTS"
 print "--------------------------------"
@@ -200,5 +200,5 @@ print "Repeated Random, Standard: ", calc_mean(rrs)
 print "Repeated Random, PP: ", calc_mean(rrpp)
 print "Hill climb, Standard: ", calc_mean(hcs)
 print "Hill climb, PP: ",calc_mean(hcpp)
-print "SA, Standard: ", sas
+print "SA, Standard: ", calc_mean(sas)
 print "SA, PP: ", calc_mean(sapp)
