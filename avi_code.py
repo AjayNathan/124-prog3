@@ -1,7 +1,7 @@
 # functions
 import random
 import math
-import sys
+import time
 
 def randnums(a,b,n,step=1):
     return [random.randrange(a,b,step) for x in range(n)]
@@ -87,8 +87,14 @@ hcpp = []
 sas = []
 sapp = []
 
+rrstimes = []
+rrpptimes = []
+hcstimes = []
+hcpptimes = []
+sastimes = []
+sapptimes = []
 
-for n in xrange(0, 25):
+for n in xrange(0, 50):
     print n
     S = randnums(-1,2,100,2)
     A = randnums(1,10**12,100)
@@ -96,7 +102,9 @@ for n in xrange(0, 25):
 
     kklist.append(kk(A[:]))
 
-#     # repeated random, standard
+    # repeated random, standard
+
+    otime = time.time()
 
     bestres = 10**13
     currress = 10**13
@@ -107,8 +115,11 @@ for n in xrange(0, 25):
             bestres = currres
 
     rrs.append(bestres)
+    rrstimes.append(time.time() - otime)
 
-#     # repeated random, preparition
+#   repeated random, preparition
+
+    otime = time.time()
 
     curr = kk(A[:])
     for x in xrange(0,runs):
@@ -118,8 +129,11 @@ for n in xrange(0, 25):
             curr = prev
 
     rrpp.append(curr)
+    rrpptimes.append(time.time() - otime)
 
 #     # hill climb, standard
+
+    otime = time.time()
 
     SHi = S[:]
     bestreshill = 10**13
@@ -131,8 +145,11 @@ for n in xrange(0, 25):
             bestreshill = currreshill
 
     hcs.append(bestreshill)
+    hcstimes.append(time.time() - otime)
 
 #     # hill climb, prepartition
+
+    otime = time.time()
 
     Ai, Pi = prepartition(A[:],P[:])
     currhill = kk(Ai[:])
@@ -144,8 +161,10 @@ for n in xrange(0, 25):
             currhill = prevhill
     # print "Hill climb, PP: ", currhill
     hcpp.append(currhill)
+    hcpptimes.append(time.time() - otime)
 
     # simulated annealing, standard
+    otime = time.time()
 
     Spp = S[:]
     Sp = S[:]
@@ -163,8 +182,12 @@ for n in xrange(0, 25):
             Sppres = Sres
     # print Sppres
     sas.append(Sppres)
+    sastimes.append(time.time() - otime)
+
 
     # simulated annealing, prepartition
+
+    otime = time.time()
 
     Acopy, Pinit = prepartition(A[:],P[:])
     Sppres = kk(Acopy[:])
@@ -183,7 +206,7 @@ for n in xrange(0, 25):
             Sppres = Sres
     # print "SA PP ", Sppres
     sapp.append(Sppres)
-
+    sapptimes.append(time.time() - otime)
 
 print "RESULTS"
 print "--------------------------------"
@@ -202,3 +225,19 @@ print "Hill climb, Standard: ", calc_mean(hcs)
 print "Hill climb, PP: ",calc_mean(hcpp)
 print "SA, Standard: ", calc_mean(sas)
 print "SA, PP: ", calc_mean(sapp)
+
+print "TIMES"
+print "---------------------------------"
+print "Repeated Random, Standard: ", rrstimes
+print "Repeated Random, PP: ", rrpptimes
+print "Hill climb, Standard: ", hcstimes
+print "Hill climb, PP: ", hcpptimes
+print "SA, Standard: ", sastimes
+print "SA, PP: ", sapptimes
+
+print "Repeated Random, Standard: ", calc_mean(rrstimes)
+print "Repeated Random, PP: ", calc_mean(rrpptimes)
+print "Hill climb, Standard: ", calc_mean(hcstimes)
+print "Hill climb, PP: ",calc_mean(hcpptimes)
+print "SA, Standard: ", calc_mean(sastimes)
+print "SA, PP: ", calc_mean(sapptimes)
