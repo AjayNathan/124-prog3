@@ -3,15 +3,18 @@ import random
 import math
 import time
 
+# generates random numbers
 def randnums(a,b,n,step=1):
     return [random.randrange(a,b,step) for x in range(n)]
 
+# residue for standard representation
 def random_sample_res(s,A):
     res = 0
     for x,y in zip(s,A):
         res = res + x*y
     return abs(res)
 
+# movement in standard
 def random_sample_move(S):
     i = randnums(0,len(S),1,1)[0]
     if random.random() > 0.5:
@@ -22,6 +25,7 @@ def random_sample_move(S):
     S[i] = -S[i]
     return S
 
+# prepartitions a list
 def prepartition(A,P = False):
     n = len(A)
     if P == False:
@@ -33,6 +37,7 @@ def prepartition(A,P = False):
                 A[j] = 0
     return A,P
 
+# movement in prepartition
 def prepartition_move(P):
     i = randnums(0,len(P),1,1)[0]
     j = randnums(0,len(P),1,1)[0]
@@ -41,6 +46,7 @@ def prepartition_move(P):
     P[i] = j
     return P
 
+# finds max two elements
 def max_two(nums):
     a = 0
     b = 1
@@ -56,6 +62,7 @@ def max_two(nums):
                 b = i
     return (a, b)
 
+# Karmarkar-Karp
 def kk(nums):
     for i in xrange(len(nums)):
         a, b = max_two(nums)
@@ -75,8 +82,6 @@ def calc_mean(l):
         s += x
     return s/len(l)
 
-# start of code
-
 runs = 25000
 
 kklist = []
@@ -95,7 +100,6 @@ sastimes = []
 sapptimes = []
 
 for n in xrange(0, 50):
-    print n
     S = randnums(-1,2,100,2)
     A = randnums(1,10**12,100)
     _ ,P = prepartition(A[:])
@@ -117,7 +121,7 @@ for n in xrange(0, 50):
     rrs.append(bestres)
     rrstimes.append(time.time() - otime)
 
-#   repeated random, preparition
+    # repeated random, preparition
 
     otime = time.time()
 
@@ -131,7 +135,7 @@ for n in xrange(0, 50):
     rrpp.append(curr)
     rrpptimes.append(time.time() - otime)
 
-#     # hill climb, standard
+    # hill climb, standard
 
     otime = time.time()
 
@@ -147,7 +151,7 @@ for n in xrange(0, 50):
     hcs.append(bestreshill)
     hcstimes.append(time.time() - otime)
 
-#     # hill climb, prepartition
+    # hill climb, prepartition
 
     otime = time.time()
 
@@ -159,11 +163,12 @@ for n in xrange(0, 50):
         prevhill = kk(App)
         if prevhill < currhill:
             currhill = prevhill
-    # print "Hill climb, PP: ", currhill
+
     hcpp.append(currhill)
     hcpptimes.append(time.time() - otime)
 
     # simulated annealing, standard
+
     otime = time.time()
 
     Spp = S[:]
@@ -178,12 +183,10 @@ for n in xrange(0, 50):
         elif random.random() < math.e**(-(Spres-Sres)/T(x)):
             Sres = Spres
         if Sres < Sppres:
-#             print Sres
             Sppres = Sres
-    # print Sppres
+
     sas.append(Sppres)
     sastimes.append(time.time() - otime)
-
 
     # simulated annealing, prepartition
 
@@ -202,11 +205,12 @@ for n in xrange(0, 50):
         elif random.random() < math.e**(-(Spres-Sres)/T(x)):
             Sres = Spres
         if Sres < Sppres:
-#             print Sres
             Sppres = Sres
-    # print "SA PP ", Sppres
+
     sapp.append(Sppres)
     sapptimes.append(time.time() - otime)
+
+# prints results
 
 print "RESULTS"
 print "--------------------------------"
